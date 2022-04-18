@@ -581,7 +581,7 @@ function parseAccelerator(accelerator) {
     if (accelerator.match(/Above_Tab/)) {
         accelerator = accelerator.replace('Above_Tab', 'grave');
     }
-
+    
     [ok, key, mods] = Gtk.accelerator_parse(accelerator);
 
     log(`PaperWM: parseAccelerator(${accelerator}) -> [${key}, ${mods}]`);

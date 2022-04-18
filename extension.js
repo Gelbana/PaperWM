@@ -32,7 +32,7 @@ if (!global.workspace_manager) {
  */
 var modules = [
     'tiling', 'navigator', 'keybindings', 'scratch', 'liveAltTab', 'utils',
-    'stackoverlay', 'app', 'kludges', 'topbar', 'settings','gestures'
+    'stackoverlay', 'app', 'kludges', 'topbar', 'settings', 'gestures', 'animations'
 ];
 
 /**
@@ -58,7 +58,7 @@ function safeCall(name, method) {
         let module = Extension.imports[name];
         module && module[method] && module[method].call(module, errorNotification);
         return true;
-    } catch(e) {
+    } catch (e) {
         print("#paperwm", `${name} failed ${method}`);
         print(`JS ERROR: ${e}\n${e.stack}`);
         errorNotification(
@@ -69,7 +69,7 @@ function safeCall(name, method) {
     }
 }
 
-var SESSIONID = ""+(new Date().getTime());
+var SESSIONID = "" + (new Date().getTime());
 
 /**
  * The extension sometimes go through multiple init -> enable -> disable
@@ -88,7 +88,7 @@ function init() {
     Extension = imports.misc.extensionUtils.getCurrentExtension();
     convenience = Extension.imports.convenience;
 
-    if(initRun) {
+    if (initRun) {
         log(`#startup Reinitialized against our will! Skip adding bindings again to not cause trouble.`);
         return;
     }
@@ -158,8 +158,7 @@ function initUserConfig() {
     const paperSettings = convenience.getSettings();
 
     if (!paperSettings.get_boolean("has-installed-config-template")
-        && !hasUserConfigFile())
-    {
+        && !hasUserConfigFile()) {
         try {
             installConfig();
 
@@ -169,9 +168,9 @@ function initUserConfig() {
                 imports.misc.util.spawn(["nautilus", configDir]);
                 notification.destroy();
             });
-        } catch(e) {
+        } catch (e) {
             errorNotification("PaperWM",
-                              `Failed to install user config: ${e.message}`, e.stack);
+                `Failed to install user config: ${e.message}`, e.stack);
             print("#rc", "Install failed", e.message);
         }
 
