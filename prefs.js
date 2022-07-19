@@ -5,6 +5,9 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 
+const Adw = imports.gi.Adw;
+
+
 const ExtensionUtils = imports.misc.extensionUtils;
 const Extension = ExtensionUtils.getCurrentExtension();
 const Convenience = Extension.imports.convenience;
@@ -743,12 +746,26 @@ function buildPrefsWidget() {
     }
     let settings = new SettingsWidget(selectedTab, selectedWorkspace || 0);
     GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
-        let window = settings.widget.get_root();
+        // 42 uses libadwaita which requires a different header bar access
+        let window = settings.widget.get_root().get_content();
         window.modal = false;
-        let headerbar = window.get_titlebar();
-        headerbar.pack_start(settings.aboutButton);
-        headerbar.set_title_widget(settings.switcher);
+        // Add widgets to the titlebar.
+        let titlebar = findChildByType(window, Adw.HeaderBar);
+        titlebar.pack_start(settings.aboutButton);
+        titlebar.set_title_widget(settings.switcher);
         return false;
     });
     return settings.widget;
 }
+
+function findChildByType(parent, type) {
+    for (let child of [...parent]) {
+      if (child instanceof type)
+          return child;
+
+      let match = findChildByType(child, type);
+      if (match)
+          return match;
+    }
+    return null;
+  }
